@@ -9,17 +9,18 @@
 
 
     <div class="clock">
-      <div class="clock-face">
-        <div class="hand hour-hand"></div>
-        <div class="hand min-hand"></div>
-        <div class="hand second-hand"></div>
-      </div>
+      <div class="hour-markers"></div>
+      <div class="label">by Serhii Soloviov</div>
+      <div class="hand hour-hand"></div>
+      <div class="hand min-hand"></div>
+      <div class="hand second-hand"></div>
+      <div class="center-dot"></div>
     </div>
 
 
   <style>
     html {
-      background: #018DED url(https://unsplash.it/1500/1000?image=881&blur=5);
+      background: #018DED url('https://images.unsplash.com/photo-1521459467264-802e2ef3141f?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3024&q=80');
       background-size: cover;
       font-family: 'helvetica neue';
       text-align: center;
@@ -28,48 +29,171 @@
 
     body {
       margin: 0;
-      font-size: 2rem;
+      padding: 0;
       display: flex;
-      flex: 1;
-      min-height: 100vh;
+      justify-content: center;
       align-items: center;
+      height: 100vh;
     }
 
     .clock {
-      width: 30rem;
-      height: 30rem;
-      border: 20px solid white;
+      position:  relative;
+      width: 200px;
+      height: 200px;
       border-radius: 50%;
-      margin: 50px auto;
-      position: relative;
-      padding: 2rem;
-      box-shadow:
-        0 0 0 4px rgba(0,0,0,0.1),
-        inset 0 0 0 3px #EFEFEF,
-        inset 0 0 10px black,
-        0 0 10px rgba(0,0,0,0.2);
+      border: 7px solid #000;
+      background: #fff url("https://images.unsplash.com/photo-1601662528567-526cd06f6582?ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&ixlib=rb-1.2.1&auto=format&fit=crop&w=3358&q=80") center center;
+      box-shadow: 
+        inset 40px 40px 90px rgba(0,0,0,.2),
+        inset 10px 10px 30px rgba(0,0,0,.5), 
+        20px 20px 30px rgba(0,0,0,.4),
+        40px 40px 60px rgba(0,0,0,.4);
     }
 
-    .clock-face {
-      position: relative;
+    .clock::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      border-radius: 50%;
+      background: transparent;
+      border: 4px solid white;
+    }
+
+    .clock::after {
+      content: '';
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      bottom: -5px;
+      left: -5px;
+      border-radius: 50%;
+      background: transparent;
+      box-shadow: -3px -3px 9px rgba(255,255,255,.8);
+    }
+
+    .label {
+      position: absolute;
+      top: 25%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+    }
+
+    .hour-markers {
+      position: absolute;
       width: 100%;
       height: 100%;
-      transform: translateY(-3px); /* account for the height of the clock hands */
+    }
+
+    .hour-markers .dot {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: black;
+      border-radius: 50%;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .center-dot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 8px;
+      background-color: #000;
+      border-radius: 50%;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+      z-index: 1;
     }
 
     .hand {
-      width: 50%;
-      height: 6px;
-      background: black;
       position: absolute;
-      top: 50%;
+      bottom: 50%;
+      left: 50%;
+      height:  50%;
+      width: 5px;
+      background-color: #000;
+      transform-origin: bottom;
+      filter: drop-shadow(12px 12px 7px rgba(0,0,0,0.5));;
     }
 
+    .hour-hand {
+      height: 30%;
+      width: 5px;
+      border-top-right-radius: 20%;
+      border-bottom-right-radius: 20%;
+      box-shadow: -10px 0px 10px rgba(0,0,0,.4);
+      margin-left: -2px;
+    }
+
+    .min-hand {
+      height: 45%;
+      width: 3px;
+      border-top-right-radius: 30%;
+      border-bottom-right-radius: 30%;
+      box-shadow: -10px 10px 10px rgba(0,0,0,.4);
+      margin-left: -1.5px;
+    }
+
+    .second-hand {
+      height: 47%;
+      width: 2px;
+      margin-left: -1px;
+      box-shadow: -10px -10px 10px rgba(0,0,0,.4);
+    }
   </style>
-
+    
   <script>
+    function createHourMarkers() {
+      const clock = document.querySelector('.hour-markers');
 
+      for (let i = 0; i < 12; i++) {
+        const angle = (i / 12) * 360;
+        const dot = document.createElement('div');
+        dot.classList.add('dot');
 
+        // calculate position using trigonometry 
+        const radius = 80;
+        const x = Math.cos(angle * (Math.PI / 180)) * radius;
+        const y = Math.sin(angle * (Math.PI / 180)) * radius;
+
+        dot.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+        clock.appendChild(dot);
+      }
+    }
+
+    createHourMarkers();
+
+    const secondHand = document.querySelector('.second-hand');
+    const minHand = document.querySelector('.min-hand');
+    const hourHand = document.querySelector('.hour-hand');
+
+    function setDate() {
+      const now = new Date();
+
+      const seconds = now.getSeconds();
+      const secondDegrees = (seconds / 60) * 360;
+      secondHand.style.transition = (seconds === 0) ? 'none' : 'transform 0.1s'
+      secondHand.style.transform = `rotate(${secondDegrees}deg)`;
+
+      const mins = now.getMinutes();
+      const minsDegrees = (mins / 60) * 360 + (seconds / 60) * 6;
+      minHand.style.transition = (seconds === 0 && mins === 0) ? 'none' : 'transform 0.1s'
+      minHand.style.transform = `rotate(${minsDegrees}deg)`;
+
+      const hours = now.getHours();
+      const hoursDegrees = (hours / 12) * 360 + (mins / 60) * 30;
+      hourHand.style.transition = (seconds === 0 && mins === 0) ? 'none' : 'transform 0.1s'
+      hourHand.style.transform = `rotate(${hoursDegrees}deg)`;
+      
+    }
+    setInterval(setDate, 1000)
   </script>
 </body>
 </html>
